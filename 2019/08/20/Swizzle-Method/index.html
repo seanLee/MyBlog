@@ -96,18 +96,18 @@
 
 
 
-  <meta name="description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Class1typedef struct objc_cla">
+  <meta name="description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Classtypedef struct objc_clas">
 <meta name="keywords" content="runtime">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swizzle Method">
 <meta property="og:url" content="http://www.seannnlee.com/2019/08/20/Swizzle-Method/index.html">
 <meta property="og:site_name" content="Sean&#39;s Blog">
-<meta property="og:description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Class1typedef struct objc_cla">
+<meta property="og:description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Classtypedef struct objc_clas">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-20T08:46:11.813Z">
+<meta property="og:updated_time" content="2019-08-20T08:48:25.524Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Swizzle Method">
-<meta name="twitter:description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Class1typedef struct objc_cla">
+<meta name="twitter:description" content="简介作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性. 使用在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点: Classtypedef struct objc_clas">
 
 
 
@@ -333,7 +333,7 @@
                 
               
 
-              <time title="创建时间：2019-08-20 10:55:15 / 修改时间：16:46:11" itemprop="dateCreated datePublished" datetime="2019-08-20T10:55:15+08:00">2019-08-20</time>
+              <time title="创建时间：2019-08-20 10:55:15 / 修改时间：16:48:25" itemprop="dateCreated datePublished" datetime="2019-08-20T10:55:15+08:00">2019-08-20</time>
             
 
             
@@ -374,7 +374,7 @@
       
         <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>作为一门动态编程语言,要决定一个Objectived-C方法的最终执行,不仅要考虑编译阶段,同时也要考虑运行阶段.因此Objectived-C提供runtime system机制来保证语言的动态性.</p>
 <h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><p>在日常开发中,有关Runtime的使用有很多种场景,今天要介绍的只是其中一种,即动态交换方法.在此之前,需要先介绍几个相关的知识点:</p>
-<h3 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">typedef struct objc_class *Class;</span><br></pre></td></tr></table></figure>
+<h3 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h3><p><code>typedef struct objc_class *Class;</code></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Method</span><br></pre></td></tr></table></figure>
 <p>typedef struct objc_method *Method;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">```Method```为指向```objc_method```结构体的指针. </span><br><span class="line"> </span><br><span class="line">以下为官方源码中对于```Objc_method```的定义</span><br></pre></td></tr></table></figure></p>
 <p>struct objc_method {<br>    SEL _Nonnull method_name        OBJC2_UNAVAILABLE;<br>    char * _Nullable method_types   OBJC2_UNAVAILABLE;<br>    IMP _Nonnull method_imp         OBJC2_UNAVAILABLE;<br>}                                   OBJC2_UNAVAILABLE;<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">下面将介绍该结构体:</span><br><span class="line">### SEL  </span><br><span class="line">```typedef struct objc_selector *SEL;``` </span><br><span class="line"></span><br><span class="line">实际上```objc_selector```这个类型并不存在.苹果这么申明的目的,就是为了将```SEL```类型与```C strings```区分开,并且隐藏将该类型的实现细节.  </span><br><span class="line"></span><br><span class="line">但是作为简单的理解,```SEL``` = ```const char[]``` =  ```C strings```  表明为Method的的标识符.</span><br><span class="line">### IMP</span><br></pre></td></tr></table></figure></p>
