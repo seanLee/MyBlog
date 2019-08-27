@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="Sean&#39;s Blog">
 <meta property="og:description" content="简介根据苹果公司的官方文档介绍,Blocks对象具备C语言的语法和runtime的特性.与标准C语言库的函数指针类似,不同点是Blocks同时也会绑定除逻辑代码之外的一些变量.Blocks不仅可以用于接口的参数传递,属性储存,同时也可以在多线程中使用.当Block作为回调时,由于其同时包含代码执行和持有数据的特性,使用起来会很便捷. 本质首先我们创建一个Command Line项目,然后申明Blo">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-08-27T09:43:59.936Z">
+<meta property="og:updated_time" content="2019-08-27T09:56:23.640Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Blocks">
 <meta name="twitter:description" content="简介根据苹果公司的官方文档介绍,Blocks对象具备C语言的语法和runtime的特性.与标准C语言库的函数指针类似,不同点是Blocks同时也会绑定除逻辑代码之外的一些变量.Blocks不仅可以用于接口的参数传递,属性储存,同时也可以在多线程中使用.当Block作为回调时,由于其同时包含代码执行和持有数据的特性,使用起来会很便捷. 本质首先我们创建一个Command Line项目,然后申明Blo">
@@ -350,7 +350,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-27 17:43:59" itemprop="dateModified" datetime="2019-08-27T17:43:59+08:00">2019-08-27</time>
+                <time title="修改时间：2019-08-27 17:56:23" itemprop="dateModified" datetime="2019-08-27T17:56:23+08:00">2019-08-27</time>
               
             
           </span>
@@ -406,7 +406,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct __main_block_impl_0 &#123;</span><br><span class="line">  struct __block_impl impl;</span><br><span class="line">  struct __main_block_desc_0* Desc;</span><br><span class="line">  int origin;</span><br><span class="line">  __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, int _origin, int flags=0) : origin(_origin) &#123;</span><br><span class="line">    impl.isa = &amp;_NSConcreteStackBlock;</span><br><span class="line">    impl.Flags = flags;</span><br><span class="line">    impl.FuncPtr = fp;</span><br><span class="line">    Desc = desc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>我们可以看到,在<code>__main_block_impl_0</code>中也随之生成类型为<code>int</code>的<code>origin</code>属性;</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">static int __main_block_func_0(struct __main_block_impl_0 *__cself, int num) &#123;</span><br><span class="line">  int origin = __cself-&gt;origin; // bound by copy</span><br><span class="line">  </span><br><span class="line">  return num * num + origin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同时在生成的<code>__main_block_func_0</code>中,通过访问<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># \_\_block</span><br><span class="line">由于Blocks捕获的是变量的值,并没有捕获变量的地址.所以一般情况下,当我们在Blocks中修改变量时,系统会提示编译错误.因此,如果我们想在Blocks中修改使用到的变量的值,就要用到`__block`关键字:</span><br></pre></td></tr></table></figure></p>
+<p>同时在生成的<code>__main_block_func_0</code>中,通过访问<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"># \_\_block</span><br><span class="line"></span><br><span class="line">由于Blocks捕获的是变量的值,并没有捕获变量的地址.所以一般情况下,当我们在Blocks中修改变量时,系统会提示编译错误.因此,如果我们想在Blocks中修改使用到的变量的值,就要用到`__block`关键字:</span><br></pre></td></tr></table></figure></p>
 <p>int main(int argc, const char * argv[]) {<br>    @autoreleasepool {<br>        // insert code here…</p>
 <pre><code>    __block int origin = 10;
 
