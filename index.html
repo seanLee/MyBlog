@@ -348,7 +348,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2019-08-22 15:43:12" itemprop="dateModified" datetime="2019-08-22T15:43:12+08:00">2019-08-22</time>
+                <time title="修改时间：2019-08-27 14:24:17" itemprop="dateModified" datetime="2019-08-27T14:24:17+08:00">2019-08-27</time>
               
             
           </span>
@@ -384,8 +384,22 @@
       
         
           
-            <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>根据苹果公司的官方文档介绍,Blocks对象具备C语言的语法和runtime的特性.与标准C语言库的函数指针类似,不同点是Blocks同时也会绑定除逻辑代码之外的一些变量.<br>Blocks不仅可以用于接口的参数,属性储存,同时也可以在多线程中使用.当Block作为回调时,由于其同时包含代码执行和持有数据的特性,使用起来会很便捷.</p>
-<h1 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h1>
+            <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>根据苹果公司的官方文档介绍,Blocks对象具备C语言的语法和runtime的特性.与标准C语言库的函数指针类似,不同点是Blocks同时也会绑定除逻辑代码之外的一些变量.<br>Blocks不仅可以用于接口的参数传递,属性储存,同时也可以在多线程中使用.当Block作为回调时,由于其同时包含代码执行和持有数据的特性,使用起来会很便捷.</p>
+<h1 id="本质"><a href="#本质" class="headerlink" title="本质"></a>本质</h1><p>首先我们创建一个<code>Command Line</code>项目,然后申明Blocks,代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int main(int argc, const char * argv[]) &#123;</span><br><span class="line">    @autoreleasepool &#123;</span><br><span class="line">        // insert code here...</span><br><span class="line">        int (^myBlock)(int) = ^(int num) &#123;</span><br><span class="line">            return num * num;</span><br><span class="line">        &#125;;</span><br><span class="line">        </span><br><span class="line">        myBlock(10);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面将OC的<code>.m</code>文件生成为C++代码:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xcrun -sdk iphoneos clang -arch arm64 -rewrite-objc 源文件.m -o 目标文件.cpp</span><br></pre></td></tr></table></figure></p>
+<p>当然,这里生成的方式有很多种,就不做详细描述,我们的目标是研究Blocks.  </p>
+<p>通过生成的C++代码我们可以看到,申明Blocks的代码变为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int (*myBlock)(int) = ((int (*)(int))&amp;__main_block_impl_0((void *)__main_block_func_0, &amp;__main_block_desc_0_DATA));</span><br></pre></td></tr></table></figure>
+<p>与OC代码中申明方式形式上的区别就是将<code>^</code>号变为<code>*</code>.</p>
+<p>同时系统也为我们自动生成了<code>__main_block_impl_0</code>,<code>__main_block_func_0</code>以及<code>__main_block_desc_0</code>三种类型.</p>
+<h3 id="main-block-imp-0"><a href="#main-block-imp-0" class="headerlink" title="__main_block_imp_0"></a>__main_block_imp_0</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct __main_block_impl_0 &#123;</span><br><span class="line">  struct __block_impl impl;</span><br><span class="line">  struct __main_block_desc_0* Desc;</span><br><span class="line">  __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, int flags=0) &#123;</span><br><span class="line">    impl.isa = &amp;_NSConcreteStackBlock;</span><br><span class="line">    impl.Flags = flags;</span><br><span class="line">    impl.FuncPtr = fp;</span><br><span class="line">    Desc = desc;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>首先看<code>impl</code>这个属性,在生成的C++源码中有如下代码: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct __block_impl &#123;  </span><br><span class="line">  void *isa;</span><br><span class="line">  int Flags;</span><br><span class="line">  int Reserved;</span><br><span class="line">  void *FuncPtr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>通过<code>isa</code>属性,不难将它与<code>Class</code>联系起来,我将其理解为系统为Blocks创建的超类.由此可以得出,Blocks的本质就是OC中的<code>Class</code>.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((int (*)(__block_impl *, int))((__block_impl *)myBlock)-&gt;FuncPtr)((__block_impl *)myBlock, 10);</span><br></pre></td></tr></table></figure>
+<p>由Blocks的执行代码,可以看出,Blocks调用的本质即为:<br><code>__main_block_impl_0.impl.FuncPtr(myBlock,params)</code></p>
+<h1 id="捕获"><a href="#捕获" class="headerlink" title="捕获"></a>捕获</h1>
           
         
       
